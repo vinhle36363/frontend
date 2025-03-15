@@ -14,8 +14,8 @@ export default function handler(
   res: NextApiResponse<Data>,
 ) {
   res.status(200).json({
-    name: "Admin",
-    logoname: "HotelManagement",
+    name: "Admin NHP",
+    logoname: "Hotel Management",
     logoLink: "https://localhost:3000",
     phonenumber: "1234567890",
     email: "email@email.com",

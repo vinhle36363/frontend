@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "@/src/styles/admin/style.css";
 import Head from "next/head";
 import SidebarMenu from "@/src/pages/components/sidebarMenu";
-import { MessageOutlined } from "@ant-design/icons";
+import { MessageOutlined, UserOutlined } from "@ant-design/icons";
+
 
 type WebsiteData = {
   name: string;
@@ -32,7 +33,14 @@ export default function AdminHome() {
       </Head>
 
       <div className="header">
-        <div className="h-left">
+        <div className="sidebar">
+          <div className="top-sidebar">
+          <div className="sidebar-avt">
+          <UserOutlined style={{fontSize:"50px", float: "left"}}/>
+          </div>
+          <div className="sidebar-name" style={{fontSize:"20px", fontWeight:"bold"}}>{data?.name}</div>
+          <div className="sidebar-title">{data?.logoname}</div>
+          </div>
           <SidebarMenu />
         </div>
         <div className="nav">
@@ -44,6 +52,9 @@ export default function AdminHome() {
           style={{color: "#fff"}}/>
           </div>
         </div>
+      </div>
+      <div className="main">
+        
       </div>
     </>
   );

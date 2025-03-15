@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 type AdminMenu = {
   key: string;
+  disabled?: boolean;
   label: string;
   baotri?: string;
   type?: "group" | "divider";
@@ -28,7 +29,7 @@ const menuData: AdminMenu[] = [
         label: "Account",
         type: "group",
         children: [
-          { key: "3", label: "Account Management" , baotri: "1"},
+          { key: "3", label: "Account Management" , baotri: "1", disabled: true},
           { key: "4", label: "Discount Management" , baotri: "1"},
         ],
       },

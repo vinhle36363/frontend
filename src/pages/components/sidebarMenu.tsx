@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { Menu, message } from "antd";
 import type { MenuProps } from "antd";
+import { useRouter } from "next/router";
 
 type MenuItem = {
   key: string;
   label: string;
-  baotri?: string; // Thêm thuộc tính bảo trì
+  baotri?: string; 
+  disabled?: boolean;
   type?: "group" | "divider";
   children?: MenuItem[];
 };
 
 const SidebarMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-
+const route = useRouter();
   useEffect(() => {
     fetch("/api/adminMenu")
       .then((res) => res.json())
@@ -20,7 +22,6 @@ const SidebarMenu: React.FC = () => {
       .catch((err) => console.error("Error fetching menu:", err));
   }, []);
 
-  // Hàm tìm kiếm menuItem theo key
   const findMenuItem = (items: MenuItem[], key: string): MenuItem | undefined => {
     for (const item of items) {
       if (item.key === key) return item;
@@ -32,11 +33,20 @@ const SidebarMenu: React.FC = () => {
     return undefined;
   };
 
-  // Xử lý khi click vào menu
-  const handleMenuClick: MenuProps["onClick"] = (e) => {
+  // const handleMenuClick: MenuProps["onClick"] = (e) => {
+  //   const clickedItem = findMenuItem(menuItems, e.key);
+  //   if (clickedItem) {
+  //     if (clickedItem.baotri === "1") {
+  //       message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
+  //     } else {
+  //       message.success(`✅ Bạn đã chọn: ${clickedItem.label}`);
+  //     }
+  //   }
+  // }; 
+  const handleMenuClick2: MenuProps["onClick"] = (e) => {
     const clickedItem = findMenuItem(menuItems, e.key);
     if (clickedItem) {
-      if (clickedItem.baotri === "1") {
+      if (clickedItem.disabled === true) {
         message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
       } else {
         message.success(`✅ Bạn đã chọn: ${clickedItem.label}`);
@@ -46,8 +56,9 @@ const SidebarMenu: React.FC = () => {
 
   return (
     <Menu
-      onClick={handleMenuClick}
+      onClick={handleMenuClick2}
       style={{ width: 256 }}
+      theme="dark"
       defaultSelectedKeys={["1"]}
       defaultOpenKeys={["sub1"]}
       mode="inline"
