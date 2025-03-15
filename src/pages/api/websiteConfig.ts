@@ -16,7 +16,7 @@ export default function handler(
   res.status(200).json({
     name: "Admin NHP",
     logoname: "Hotel Management",
-    logoLink: "https://localhost:3000",
+    logoLink: "http://127.0.0.1:3000",
     phonenumber: "1234567890",
     email: "email@email.com",
   });

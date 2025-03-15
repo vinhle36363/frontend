@@ -51,7 +51,8 @@ const route = useRouter();
   return (
     <Menu
       onClick={handleMenuClick2}
-      style={{ width: 256 }}
+      style={{ width: 256, height: "100%"  }}
+      
       theme="dark"
       defaultSelectedKeys={["1"]}
       defaultOpenKeys={["sub1", "sub2", "sub4"]}

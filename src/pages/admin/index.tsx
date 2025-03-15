@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "@/src/styles/admin/style.css";
 import Head from "next/head";
+import { Col, Row } from "antd";
+
 import SidebarMenu from "@/src/pages/components/sidebarMenu";
 import { MessageOutlined, UserOutlined } from "@ant-design/icons";
-
+import SearchBar from "@/src/pages/components/searchBar";
 type WebsiteData = {
   name: string;
   logoname: string;
@@ -47,16 +49,28 @@ export default function AdminHome() {
           </div>
           <SidebarMenu />
         </div>
-        <div className="nav">
-          <div className="logo">
-            <a href={data?.logoLink || "#"}>
-              {data?.logoname || "HotelManagement"}
-            </a>
-          </div>
-          <div className="top-btn">
-            <MessageOutlined style={{ color: "#fff" }} />
-          </div>
-        </div>
+        
+        <Row className="nav" >
+            <Col span={8} >
+              <div className="logo">
+                <a href={data?.logoLink || "#"}>
+                  {data?.logoname || "HotelManagement"}
+                </a>
+              </div>
+            </Col>
+
+            <Col span={8} >
+              <div className="search-Bar">
+                <SearchBar />
+              </div>
+            </Col>
+
+            <Col span={8} >
+              <div className="top-btn">
+                <MessageOutlined style={{ color: "#fff" }} />
+              </div>
+            </Col>
+        </Row>
       </div>
       <div className="main"></div>
     </>

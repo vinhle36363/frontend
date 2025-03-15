@@ -16,12 +16,12 @@ body {
     
 }
 .nav {
-    height: 50px;
+    height: 70px;
     width: 100%;
+    background-color: #001529;
     display: flex;
     justify-self: space-between;
     align-items: center;
-    background-color: #001529;
 }
 .logo {
     float: left;
