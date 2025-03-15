@@ -33,22 +33,16 @@ const route = useRouter();
     return undefined;
   };
 
-  // const handleMenuClick: MenuProps["onClick"] = (e) => {
-  //   const clickedItem = findMenuItem(menuItems, e.key);
-  //   if (clickedItem) {
-  //     if (clickedItem.baotri === "1") {
-  //       message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
-  //     } else {
-  //       message.success(`✅ Bạn đã chọn: ${clickedItem.label}`);
-  //     }
-  //   }
-  // }; 
   const handleMenuClick2: MenuProps["onClick"] = (e) => {
     const clickedItem = findMenuItem(menuItems, e.key);
     if (clickedItem) {
       if (clickedItem.disabled === true) {
         message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
-      } else {
+      }
+      else if(clickedItem.baotri === "1") {
+        message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
+      }
+      else {
         message.success(`✅ Bạn đã chọn: ${clickedItem.label}`);
       }
     }
@@ -60,7 +54,7 @@ const route = useRouter();
       style={{ width: 256 }}
       theme="dark"
       defaultSelectedKeys={["1"]}
-      defaultOpenKeys={["sub1"]}
+      defaultOpenKeys={["sub1", "sub2", "sub4"]}
       mode="inline"
       items={menuItems as MenuProps["items"]}
     />

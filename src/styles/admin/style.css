@@ -21,7 +21,7 @@ body {
     display: flex;
     justify-self: space-between;
     align-items: center;
-    background-color: #081630;
+    background-color: #001529;
 }
 .logo {
     float: left;
@@ -41,6 +41,8 @@ body {
 .top-sidebar {
     width: 100%;
  color:white;   
-    background-color: #081630;
+    background-color: #001529;
     height: 50px;
+    padding: 10px;
+    
 }
