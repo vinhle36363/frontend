@@ -22,7 +22,7 @@ body {
   display: flex;
   justify-self: space-between;
   align-items: center;
-  z-index:10000;
+  
 }
 .logo {
   float: left;

@@ -6,8 +6,7 @@ import { Button } from "antd";
 
 const SearchBar: React.FC = () => (
   <div style={{ display: "flex" }}>
-    {" "}
-    <Input placeholder="Searching..." />{" "}
+    <Input placeholder="Searching..." id="search"/>
     <Tooltip title="search">
       <Button type="dashed" icon={<SearchOutlined />} />
     </Tooltip>

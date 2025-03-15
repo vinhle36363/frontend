@@ -3,8 +3,14 @@ import "@/src/styles/admin/style.css";
 import Head from "next/head";
 import { Col, Row } from "antd";
 import { FloatButton } from "antd";
+import { Badge } from "antd";
 import SidebarMenu from "@/src/pages/components/sidebarMenu";
-import { MessageOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  MessageOutlined,
+  UserOutlined,
+  BellOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import SearchBar from "@/src/pages/components/searchBar";
 type WebsiteData = {
   name: string;
@@ -17,6 +23,8 @@ type WebsiteData = {
 export default function AdminHome() {
   const [data, setData] = useState<WebsiteData | null>(null);
 
+  const [hasMessage, messageCount] = useState(2);
+  const [hasNotification, notificationCount] = useState(3);
   useEffect(() => {
     fetch("/api/websiteConfig")
       .then((res) => res.json())
@@ -47,7 +55,9 @@ export default function AdminHome() {
             </div>
             <div className="sidebar-title">{data?.logoname}</div>
           </div>
+          <div className="sidebarMenu">
           <SidebarMenu />
+          </div>
         </div>
 
         <Row className="nav">
@@ -67,16 +77,60 @@ export default function AdminHome() {
 
           <Col span={8}>
             <div className="top-btn">
-              <button style={{ border: "none", background: "none" }}>
-                <MessageOutlined style={{ color: "#fff", fontSize: "25px" }} />
+              <button
+                style={{
+                  border: "none",
+                  background: "none",
+                  position: "relative",
+                }}
+              >
+                <Badge count={hasMessage} overflowCount={9}>
+                  <MessageOutlined
+                    style={{ color: "#fff", fontSize: "25px" }}
+                  />
+                </Badge>
+              </button>
+
+              {/* Icon Thông báo */}
+              <button
+                style={{
+                  border: "none",
+                  background: "none",
+                  paddingLeft: "20px",
+                  position: "relative",
+                }}
+              >
+                <Badge count={hasNotification} overflowCount={9}>
+                  <BellOutlined style={{ color: "#fff", fontSize: "25px" }} />
+                </Badge>
+              </button>
+              <button
+                style={{
+                  border: "none",
+                  background: "none",
+                  paddingLeft: "20px",
+                }}
+              >
+                <SettingOutlined style={{ color: "#fff", fontSize: "25px" }} />
+              </button>
+
+              <button
+                style={{
+                  border: "none",
+                  background: "none",
+                  paddingLeft: "20px",
+                }}
+              >
+                <UserOutlined style={{ color: "#fff", fontSize: "25px" }} />
               </button>
             </div>
           </Col>
         </Row>
       </div>
-      <div className="main"></div>
+      <div className="main">
+        <h1>Test</h1>
+      </div>
       <FloatButton.BackTop />
-
     </>
   );
 }

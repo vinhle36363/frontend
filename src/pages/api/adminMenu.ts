@@ -29,7 +29,7 @@ const menuData: AdminMenu[] = [
         label: "Account",
         type: "group",
         children: [
-          { key: "3", label: "Account Management" , baotri: "1", disabled: false},
+          { key: "3", label: "Account Management" , baotri: "1", disabled: true},
           { key: "4", label: "Discount Management" , baotri: "1"},
         ],
       },
