@@ -36,28 +36,26 @@ const menuData: AdminMenu[] = [
   },
   {
     key: "sub2",
-    label: "Hotel system",
+    label: "Rooms",
     children: [
-      { key: "5", label: "Option 5", baotri: "0"},
-      { key: "6", label: "Option 6", baotri: "0"},
-      {
-        key: "sub3",
-        label: "Submenu",
-        children: [
-          { key: "7", label: "Option 7" , baotri: "0"},
-          { key: "8", label: "Option 8", baotri: "0" },
-        ],
-      },
-    ],
-  },
+      { key: "5", label: "Rooms", type: "group", children: [
+        { key: "5.1", label: "Rooms Management" , baotri: "0"},
+        { key: "5.2", label: "Rooms Booking" , baotri: "0"},
+    ]},
+  ],
+},
   {
     key: "sub4",
-    label: "Navigation Three",
+    label: "Services & Analytics",
     children: [
-      { key: "9", label: "Option 9" , baotri: "0"},
-      { key: "10", label: "Option 10" , baotri: "0"},
-      { key: "11", label: "Option 11" , baotri: "0"},
-      { key: "12", label: "Option 12" , baotri: "0"},
+      { key: "9", label: "Services & Invoices" , type: "group", children: [
+        { key: "9.1", label: "Services Management" , baotri: "0"},
+        { key: "9.2", label: "Invoices Management" , baotri: "0"},
+    ]},
+      { key: "10", label: "Analytics & Report" , type: "group", children: [
+        { key: "10.1", label: "Analytics Management" , baotri: "0"},
+        { key: "10.2", label: "Report Management" , baotri: "0"},
+    ]},
     ],
   },
 ];
