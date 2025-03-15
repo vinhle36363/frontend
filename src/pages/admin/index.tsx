@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "@/src/styles/admin/style.css";
 import Head from "next/head";
 import { Col, Row } from "antd";
-
+import { FloatButton } from "antd";
 import SidebarMenu from "@/src/pages/components/sidebarMenu";
 import { MessageOutlined, UserOutlined } from "@ant-design/icons";
 import SearchBar from "@/src/pages/components/searchBar";
@@ -49,30 +49,34 @@ export default function AdminHome() {
           </div>
           <SidebarMenu />
         </div>
-        
-        <Row className="nav" >
-            <Col span={8} >
-              <div className="logo">
-                <a href={data?.logoLink || "#"}>
-                  {data?.logoname || "HotelManagement"}
-                </a>
-              </div>
-            </Col>
 
-            <Col span={8} >
-              <div className="search-Bar">
-                <SearchBar />
-              </div>
-            </Col>
+        <Row className="nav">
+          <Col span={8}>
+            <div className="logo">
+              <a href={data?.logoLink || "#"}>
+                {data?.logoname || "HotelManagement"}
+              </a>
+            </div>
+          </Col>
 
-            <Col span={8} >
-              <div className="top-btn">
-                <MessageOutlined style={{ color: "#fff" }} />
-              </div>
-            </Col>
+          <Col span={8}>
+            <div className="search-Bar">
+              <SearchBar />
+            </div>
+          </Col>
+
+          <Col span={8}>
+            <div className="top-btn">
+              <button style={{ border: "none", background: "none" }}>
+                <MessageOutlined style={{ color: "#fff", fontSize: "25px" }} />
+              </button>
+            </div>
+          </Col>
         </Row>
       </div>
       <div className="main"></div>
+      <FloatButton.BackTop />
+
     </>
   );
 }
