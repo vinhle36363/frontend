@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "@/src/styles/admin/style.css";
 import Head from "next/head";
-import { Col, Row } from "antd";
-import { FloatButton } from "antd";
-import { Badge } from "antd";
+import { Col, Row, FloatButton, Badge } from "antd";
 import SidebarMenu from "@/src/pages/components/sidebarMenu";
 import {
   MessageOutlined,
@@ -23,8 +21,8 @@ type WebsiteData = {
 export default function AdminHome() {
   const [data, setData] = useState<WebsiteData | null>(null);
 
-  const [hasMessage, messageCount] = useState(2);
-  const [hasNotification, notificationCount] = useState(3);
+  const [hasMessage] = useState(2);
+  const [hasNotification] = useState(3);
   useEffect(() => {
     fetch("/api/websiteConfig")
       .then((res) => res.json())

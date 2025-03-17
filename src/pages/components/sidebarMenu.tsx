@@ -1,80 +1,119 @@
-import { useEffect, useState } from "react";
-import { Menu, message } from "antd";
+import { useEffect, useState, ReactNode } from "react";
+import { Menu, message, Badge } from "antd";
 import type { MenuProps } from "antd";
-import { useRouter } from "next/router";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+
+import {
+  UserOutlined,
+  VideoCameraOutlined,
+  CustomerServiceOutlined,
+  HomeOutlined,
+  BellOutlined,
+  SettingOutlined,
+  LineChartOutlined,
+} from "@ant-design/icons";
+
 type MenuItem = {
   key: string;
   label: string;
+  icon?: string;
   baotri?: string;
   disabled?: boolean;
   type?: "group" | "divider";
+  badge?: number;
   children?: MenuItem[];
 };
 
+const iconMap: Record<string, ReactNode> = {
+  CustomerServiceOutlined: <CustomerServiceOutlined />,
+  UserOutlined: <UserOutlined />,
+  VideoCameraOutlined: <VideoCameraOutlined />,
+  HomeOutlined: <HomeOutlined />,
+  BellOutlined: <BellOutlined />,
+  SettingOutlined: <SettingOutlined />,
+  LineChartOutlined: <LineChartOutlined />,
+};
+
 const SidebarMenu: React.FC = () => {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const route = useRouter();
+  const [menuItems, setMenuItems] = useState<MenuProps["items"]>([]);
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+
   useEffect(() => {
     fetch("/api/adminMenu")
       .then((res) => res.json())
-      .then((data) => setMenuItems(data.menu))
+      .then((data) => {
+        const formattedMenu = convertMenuItems(data.menu);
+        setMenuItems(formattedMenu);
+      })
       .catch((err) => console.error("Error fetching menu:", err));
   }, []);
 
-  const findMenuItem = (
-    items: MenuItem[],
-    key: string
-  ): MenuItem | undefined => {
-    for (const item of items) {
-      if (item.key === key) return item;
-      if (item.children) {
-        const found = findMenuItem(item.children, key);
+  const handleMenuClick: MenuProps["onClick"] = (e) => {
+    const clickedItem = findMenuItem(menuItems, e.key);
+    if (clickedItem) {
+      if (clickedItem.disabled || clickedItem.baotri === "1") {
+        message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
+      }
+      setOpenKeys((prevOpenKeys) =>
+        prevOpenKeys.includes(e.key)
+          ? prevOpenKeys.filter((key) => key !== e.key)
+          : [...prevOpenKeys, e.key]
+      );
+    }
+  };
+
+  const handleOpenChange = (keys: string[]) => {
+    setOpenKeys(keys);
+  };
+
+  const findMenuItem = (items: MenuProps["items"], key: string): any => {
+    for (const item of items || []) {
+      if ((item as any)?.key === key) return item;
+      if ((item as any)?.children) {
+        const found = findMenuItem((item as any)?.children, key);
         if (found) return found;
       }
     }
     return undefined;
   };
-  const [collapsed, setCollapsed] = useState(false);
 
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
+  const convertMenuItems = (items: MenuItem[]): MenuProps["items"] =>
+    items.map((item) => {
+      const menuItem: any = {
+        key: item.key,
+        label: (
+          <span>
+            <Badge
+              count={item.badge}
+              offset={[10, 0]}
+              style={{ width: "20px", margin: "5px 0 0 20px", fontSize: "10px" }}
+            >
+              <span style={{ marginLeft: 5, marginRight: 10, color: "white" }}>
+                {item.label}
+              </span>
+            </Badge>
+          </span>
+        ),
+        icon: item.icon ? iconMap[item.icon] : undefined,
+        disabled: item.disabled,
+        type: item.type,
+      };
 
-  const handleMenuClick2: MenuProps["onClick"] = (e) => {
-    const clickedItem = findMenuItem(menuItems, e.key);
-    if (clickedItem) {
-      if (clickedItem.disabled === true) {
-        message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
-      } else if (clickedItem.baotri === "1") {
-        message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
-      } else {
-        message.success(`✅ Bạn đã chọn: ${clickedItem.label}`);
+      if (item.children) {
+        menuItem.children = convertMenuItems(item.children);
       }
-    }
-  };
+
+      return menuItem;
+    });
 
   return (
-    <div>
-      <Menu
-        onClick={handleMenuClick2}
-        style={{ width: 256, height: "100%" }}
-        theme="dark"
-        defaultOpenKeys={["sub1", "sub2", "sub4"]}
-        mode="inline"
-        inlineCollapsed={collapsed}
-        items={menuItems as MenuProps["items"]}
-      />
-      
-      <Button
-        type="primary"
-        onClick={toggleCollapsed}
-        style={{ marginBottom: "20px", backgroundColor: "#001529", width: "100%" , borderRadius: "0px"}}
-      >
-        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      </Button>
-    </div>
+    <Menu
+      onClick={handleMenuClick}
+      theme="dark"
+      openKeys={openKeys}
+      onOpenChange={handleOpenChange}
+      mode="inline"
+      items={menuItems}
+    />
   );
 };
 
