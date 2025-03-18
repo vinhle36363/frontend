@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "@/src/styles/admin/style.css";
 import Head from "next/head";
+import { redirect } from 'next/navigation'
+import {Router, useRouter} from 'next/router'
 import { Col, Row, FloatButton, Badge } from "antd";
 import SidebarMenu from "@/src/pages/components/sidebarMenu";
 import {
@@ -19,11 +21,15 @@ type WebsiteData = {
 };
 
 export default function AdminHome() {
+  
+  const router = useRouter();
+  
   const [data, setData] = useState<WebsiteData | null>(null);
 
   const [hasMessage] = useState(2);
   const [hasNotification] = useState(3);
   useEffect(() => {
+    router.push("/admin/test");
     fetch("/api/websiteConfig")
       .then((res) => res.json())
       .then((data) => setData(data))

@@ -38,7 +38,7 @@ export default function Home() {
             <li>
               <code>HotelManagement Website</code>.
             </li>
-            <li>By: Vinh, Phúc, Nguyên</li>
+            <li>By: Vinh, Phúc, Nguyênư</li>
           </ol>
 
           <div className={styles.ctas}>

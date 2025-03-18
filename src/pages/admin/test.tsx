@@ -4,7 +4,10 @@ import {
   MenuUnfoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, theme, Col, Row, FloatButton } from "antd";
+
+import type { Dayjs } from 'dayjs';
+
+import {Calendar,CalendarProps, Button, Layout, theme, Col, Row, FloatButton } from "antd";
 import "@/src/styles/admin/style.css";
 import SearchBar from "@/src/pages/components/searchBar";
 
@@ -25,6 +28,14 @@ type config = {
 const { Header, Sider, Content } = Layout;
 
 export default function AdminHome() {
+  const { token } = theme.useToken();
+
+  const wrapperStyle: React.CSSProperties = {
+    width: 300,
+    border: `1px solid ${token.colorBorderSecondary}`,
+    borderRadius: token.borderRadiusLG,
+  };
+
   const [data, setData] = useState<WebsiteData | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -110,6 +121,9 @@ export default function AdminHome() {
                   suffix="%"
                 />
               </Card>
+            </Col>
+            <Col>
+            <Calendar style={wrapperStyle} fullscreen= {false}/>
             </Col>
           </Row>
         </Content>

@@ -38,8 +38,20 @@ const SidebarMenu: React.FC = () => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("/api/adminMenu")
-      .then((res) => res.json())
+    fetch("/api/adminMenu",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer 123`,
+        },
+      }
+    )
+      
+      .then(res => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
       .then((data) => {
         const formattedMenu = convertMenuItems(data.menu);
         setMenuItems(formattedMenu);
@@ -50,14 +62,10 @@ const SidebarMenu: React.FC = () => {
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     const clickedItem = findMenuItem(menuItems, e.key);
     if (clickedItem) {
-      if (clickedItem.disabled || clickedItem.baotri === "1") {
-        message.warning(`🔧 ${clickedItem.label} đang bảo trì!`);
+      if (clickedItem.baotri === 0) {
+        message.success(`🔧 ${clickedItem.label} đang bảo trì!`);
       }
-      setOpenKeys((prevOpenKeys) =>
-        prevOpenKeys.includes(e.key)
-          ? prevOpenKeys.filter((key) => key !== e.key)
-          : [...prevOpenKeys, e.key]
-      );
+      
     }
   };
 
