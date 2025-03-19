@@ -1,22 +1,35 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-
-
 const API_TOKEN = process.env.API_TOKEN; // Lấy token từ biến môi trường
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("🔹 API_TOKEN từ môi trường:", API_TOKEN);
-  console.log("🔹 Token từ request:", req.headers.authorization);
+  if (!API_TOKEN) {
+    console.error("❌ API_TOKEN chưa được thiết lập!");
+    return res.status(500).json({ message: "Server configuration error" });
+  }
+
+  console.log("🔹 Token từ request nhận được");
 
   const token = req.headers.authorization?.split(" ")[1];
 
-  // Kiểm tra token
   if (!token || token !== API_TOKEN) {
-    return res.status(401).json({ message: "Unauthorized" }); // Trả về lỗi nếu token sai hoặc không có
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
-  // Dữ liệu menu
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   const menuData = [
+    {
+      key: "999",
+      icon: "HomeOutlined",
+      label: "Dashboard",
+    },
     {
       key: "sub1",
       icon: "CustomerServiceOutlined",
@@ -36,18 +49,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           label: "Account",
           type: "group",
           children: [
-            {
-              key: "3",
-              label: "Account Management",
-              baotri: "1",
-              disabled: true,
-            },
-            {
-              key: "4",
-              label: "Discount Management",
-              baotri: "1",
-              disabled: true,
-            },
+            { key: "3", label: "Account Management", baotri: "1", disabled: true },
+            { key: "4", label: "Discount Management", baotri: "1", disabled: true },
           ],
         },
       ],
@@ -75,13 +78,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       badge: 109,
       children: [
         { key: "7", label: "Messages", baotri: "1", disabled: true, badge: 43 },
-        {
-          key: "8",
-          label: "Notifications",
-          baotri: "1",
-          disabled: true,
-          badge: 66,
-        },
+        { key: "8", label: "Notifications", baotri: "1", disabled: true, badge: 66 },
       ],
     },
     {

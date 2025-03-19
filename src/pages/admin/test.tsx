@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
-import type { Dayjs } from 'dayjs';
-
-import {Calendar,CalendarProps, Button, Layout, theme, Col, Row, FloatButton } from "antd";
+import { Calendar, Button, Layout, Col, Row, FloatButton, Card, Statistic, theme } from "antd";
 import "@/src/styles/admin/style.css";
 import SearchBar from "@/src/pages/components/searchBar";
-
-import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
-import { Card, Statistic } from "antd";
 import SidebarMenu from "../components/sidebarMenu";
+import Dashboards from "./dashboards";
 type WebsiteData = {
   name: string;
   logoname: string;
@@ -21,34 +17,22 @@ type WebsiteData = {
   email: string;
   logoLink: string;
 };
-type config = {
-  isMenuCollapsed: boolean;
-};
 
 const { Header, Sider, Content } = Layout;
 
 export default function AdminHome() {
   const { token } = theme.useToken();
-
-  const wrapperStyle: React.CSSProperties = {
-    width: 300,
-    border: `1px solid ${token.colorBorderSecondary}`,
-    borderRadius: token.borderRadiusLG,
-  };
-
   const [data, setData] = useState<WebsiteData | null>(null);
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-  if (collapsed === true) {
-  }
+  const [activeComponent, setActiveComponent] = useState<React.ReactNode>(null);
+
   useEffect(() => {
     fetch("/api/websiteConfig")
       .then((res) => res.json())
       .then((data) => setData(data))
       .catch((err) => console.error("Error fetching data:", err));
   }, []);
+
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -57,30 +41,24 @@ export default function AdminHome() {
             <div className="sidebar-avt">
               <UserOutlined style={{ fontSize: "50px", float: "left" }} />
             </div>
-            <div
-              className="sidebar-name"
-              style={{ fontSize: "20px", fontWeight: "bold" }}
-            >
+            <div className="sidebar-name" style={{ fontSize: "20px", fontWeight: "bold" }}>
               {data?.name}
             </div>
             <div className="sidebar-title">{data?.logoname}</div>
           </div>
         )}
-        <SidebarMenu />
+        <SidebarMenu setActiveComponent={setActiveComponent} />
       </Sider>
+      
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header style={{ padding: 0, background: token.colorBgContainer }}>
           <Row>
             <Col span={12}>
               <Button
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
-                style={{
-                  fontSize: "16px",
-                  width: 64,
-                  height: 64,
-                }}
+                style={{ fontSize: "16px", width: 64, height: 64 }}
               />
             </Col>
             <Col span={12}>
@@ -88,49 +66,17 @@ export default function AdminHome() {
             </Col>
           </Row>
         </Header>
-        <Content
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            minHeight: 280,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Card variant="borderless">
-                <Statistic
-                  title="Tổng doanh thu"
-                  value={11.28}
-                  precision={2}
-                  valueStyle={{ color: "#3f8600" }}
-                  prefix={<ArrowUpOutlined />}
-                  suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card variant="borderless">
-                <Statistic
-                  title="Lượng truy cập theo tuần"
-                  value={9.3}
-                  precision={2}
-                  valueStyle={{ color: "#cf1322" }}
-                  prefix={<ArrowDownOutlined />}
-                  suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col>
-            <Calendar style={wrapperStyle} fullscreen= {false}/>
-            </Col>
-          </Row>
-        </Content>
-        
-      <FloatButton.BackTop visibilityHeight={200}/>
+
+        {activeComponent ? (
+          <Content style={{ margin: "24px 8px", padding: 24, minHeight: 280 }}>
+            {activeComponent}
+          </Content>
+        ) : (
+        <Dashboards/>
+        )}
+
+        <FloatButton.BackTop visibilityHeight={200} />
       </Layout>
-      
     </Layout>
   );
 }
