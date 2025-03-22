@@ -7,30 +7,31 @@
 .hero {
   position: relative;
   height: 600px;
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-              url('/hotel-hero.jpg') center/cover no-repeat;
+  background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+  color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   padding: 2rem;
 }
 
 .heroContent {
-  text-align: center;
-  color: white;
+  z-index: 1;
+  max-width: 800px;
   margin-bottom: 2rem;
 }
 
 .heroContent h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   margin-bottom: 1rem;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .heroContent p {
   font-size: 1.5rem;
-  margin-bottom: 2rem;
+  opacity: 0.9;
 }
 
 .searchBox {
@@ -86,6 +87,61 @@
   padding: 2rem;
   background-color: #001529;
   color: white;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 2rem;
+  min-height: 60vh;
+}
+
+.roomDetail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.roomDetail .ant-typography {
+  margin-bottom: 1.5rem;
+}
+
+.roomDetail ul {
+  list-style: none;
+  padding: 0;
+}
+
+.roomDetail ul li {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.roomDetail ul li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #1890ff;
+}
+
+.roomDetail .ant-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.roomDetail .ant-card-head-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.roomDetail .ant-btn-primary {
+  height: 48px;
+  font-size: 1.1rem;
 }
 
 @media (max-width: 768px) {
