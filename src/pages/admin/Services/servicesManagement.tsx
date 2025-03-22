@@ -14,29 +14,35 @@ import {
   Col,
   Select,
   Tag,
+  InputNumber,
+  Upload,
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
+import type { UploadFile } from 'antd/es/upload/interface';
 
 const { Title } = Typography;
 const { Option } = Select;
 
-interface User {
+interface Service {
   id: string;
-  username: string;
-  email: string;
-  role: 'admin' | 'user';
-  status: 'active' | 'inactive';
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  status: 'available' | 'unavailable';
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
+const ServiceManagement: React.FC = () => {
+  const [services, setServices] = useState<Service[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingService, setEditingService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   // Debug environment variables
   useEffect(() => {
@@ -44,8 +50,8 @@ const UserManagement: React.FC = () => {
     console.log('API Token value:', process.env.NEXT_PUBLIC_API_TOKEN);
   }, []);
 
-  // Fetch users
-  const fetchUsers = async () => {
+  // Fetch services
+  const fetchServices = async () => {
     try {
       setLoading(true);
       const apiToken = process.env.NEXT_PUBLIC_API_TOKEN;
@@ -57,7 +63,7 @@ const UserManagement: React.FC = () => {
       }
 
       console.log('Making API request with token:', apiToken);
-      const response = await fetch('/api/users', {
+      const response = await fetch('/api/services', {
         headers: {
           'Authorization': `Bearer ${apiToken}`,
         },
@@ -66,32 +72,43 @@ const UserManagement: React.FC = () => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('API Error:', errorData);
-        throw new Error(errorData.message || 'Failed to fetch users');
+        throw new Error(errorData.message || 'Failed to fetch services');
       }
       
       const data = await response.json();
-      setUsers(data);
+      setServices(data);
     } catch (error) {
-      console.error('Error fetching users:', error);
-      message.error(error instanceof Error ? error.message : 'Failed to fetch users');
+      console.error('Error fetching services:', error);
+      message.error(error instanceof Error ? error.message : 'Failed to fetch services');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchServices();
   }, []);
 
   const handleAdd = () => {
-    setEditingUser(null);
+    setEditingService(null);
     form.resetFields();
+    setFileList([]);
     setIsModalVisible(true);
   };
 
-  const handleEdit = (record: User) => {
-    setEditingUser(record);
+  const handleEdit = (record: Service) => {
+    setEditingService(record);
     form.setFieldsValue(record);
+    if (record.imageUrl) {
+      setFileList([
+        {
+          uid: '-1',
+          name: 'image.png',
+          status: 'done',
+          url: record.imageUrl,
+        },
+      ]);
+    }
     setIsModalVisible(true);
   };
 
@@ -105,7 +122,7 @@ const UserManagement: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`/api/users?id=${id}`, {
+      const response = await fetch(`/api/services?id=${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${apiToken}`,
@@ -114,14 +131,14 @@ const UserManagement: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete user');
+        throw new Error(errorData.message || 'Failed to delete service');
       }
 
-      message.success('User deleted successfully');
-      fetchUsers();
+      message.success('Service deleted successfully');
+      fetchServices();
     } catch (error) {
-      console.error('Error deleting user:', error);
-      message.error(error instanceof Error ? error.message : 'Failed to delete user');
+      console.error('Error deleting service:', error);
+      message.error(error instanceof Error ? error.message : 'Failed to delete service');
     }
   };
 
@@ -141,9 +158,9 @@ const UserManagement: React.FC = () => {
         'Authorization': `Bearer ${apiToken}`,
       };
       
-      if (editingUser) {
-        // Update existing user
-        const response = await fetch(`/api/users?id=${editingUser.id}`, {
+      if (editingService) {
+        // Update existing service
+        const response = await fetch(`/api/services?id=${editingService.id}`, {
           method: 'PUT',
           headers,
           body: JSON.stringify(values),
@@ -151,13 +168,13 @@ const UserManagement: React.FC = () => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to update user');
+          throw new Error(errorData.message || 'Failed to update service');
         }
 
-        message.success('User updated successfully');
+        message.success('Service updated successfully');
       } else {
-        // Create new user
-        const response = await fetch('/api/users', {
+        // Create new service
+        const response = await fetch('/api/services', {
           method: 'POST',
           headers,
           body: JSON.stringify(values),
@@ -165,47 +182,48 @@ const UserManagement: React.FC = () => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to create user');
+          throw new Error(errorData.message || 'Failed to create service');
         }
 
-        message.success('User created successfully');
+        message.success('Service created successfully');
       }
 
       setIsModalVisible(false);
-      fetchUsers();
+      fetchServices();
     } catch (error) {
-      console.error('Error saving user:', error);
-      message.error(error instanceof Error ? error.message : 'Failed to save user');
+      console.error('Error saving service:', error);
+      message.error(error instanceof Error ? error.message : 'Failed to save service');
     }
   };
 
-  const columns: ColumnsType<User> = [
+  const columns: ColumnsType<Service> = [
     {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role',
-      render: (role: string) => (
-        <Tag color={role === 'admin' ? 'red' : 'blue'}>
-          {role.toUpperCase()}
-        </Tag>
-      ),
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      render: (price: number) => `$${price.toFixed(2)}`,
+    },
+    {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
-        <Tag color={status === 'active' ? 'green' : 'orange'}>
+        <Tag color={status === 'available' ? 'green' : 'red'}>
           {status.toUpperCase()}
         </Tag>
       ),
@@ -229,7 +247,7 @@ const UserManagement: React.FC = () => {
             Edit
           </Button>
           <Popconfirm
-            title="Are you sure you want to delete this user?"
+            title="Are you sure you want to delete this service?"
             onConfirm={() => handleDelete(record.id)}
             okText="Yes"
             cancelText="No"
@@ -248,7 +266,7 @@ const UserManagement: React.FC = () => {
       <Card>
         <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
           <Col>
-            <Title level={2}>User Management</Title>
+            <Title level={2}>Service Management</Title>
           </Col>
           <Col>
             <Button
@@ -256,20 +274,20 @@ const UserManagement: React.FC = () => {
               icon={<PlusOutlined />}
               onClick={handleAdd}
             >
-              Add User
+              Add Service
             </Button>
           </Col>
         </Row>
 
         <Table
           columns={columns}
-          dataSource={users}
+          dataSource={services}
           rowKey="id"
           loading={loading}
         />
 
         <Modal
-          title={editingUser ? 'Edit User' : 'Add User'}
+          title={editingService ? 'Edit Service' : 'Add Service'}
           open={isModalVisible}
           onOk={handleModalOk}
           onCancel={() => setIsModalVisible(false)}
@@ -279,44 +297,73 @@ const UserManagement: React.FC = () => {
             layout="vertical"
           >
             <Form.Item
-              name="username"
-              label="Username"
-              rules={[{ required: true, message: 'Please input username!' }]}
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: 'Please input service name!' }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: 'Please input email!' },
-                { type: 'email', message: 'Please enter a valid email!' }
-              ]}
+              name="description"
+              label="Description"
+              rules={[{ required: true, message: 'Please input service description!' }]}
             >
-              <Input />
+              <Input.TextArea rows={4} />
             </Form.Item>
 
             <Form.Item
-              name="role"
-              label="Role"
-              rules={[{ required: true, message: 'Please select role!' }]}
+              name="price"
+              label="Price"
+              rules={[{ required: true, message: 'Please input service price!' }]}
             >
-              <Select>
-                <Option value="admin">Admin</Option>
-                <Option value="user">User</Option>
-              </Select>
+              <InputNumber
+                style={{ width: '100%' }}
+                min={0}
+                precision={2}
+                prefix="$"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="category"
+              label="Category"
+              rules={[{ required: true, message: 'Please input service category!' }]}
+            >
+              <Input />
             </Form.Item>
 
             <Form.Item
               name="status"
               label="Status"
-              rules={[{ required: true, message: 'Please select status!' }]}
+              rules={[{ required: true, message: 'Please select service status!' }]}
             >
               <Select>
-                <Option value="active">Active</Option>
-                <Option value="inactive">Inactive</Option>
+                <Option value="available">Available</Option>
+                <Option value="unavailable">Unavailable</Option>
               </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="imageUrl"
+              label="Image URL"
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Upload Image">
+              <Upload
+                listType="picture-card"
+                fileList={fileList}
+                onChange={({ fileList }) => setFileList(fileList)}
+                maxCount={1}
+                beforeUpload={() => false}
+              >
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              </Upload>
             </Form.Item>
           </Form>
         </Modal>
@@ -325,5 +372,4 @@ const UserManagement: React.FC = () => {
   );
 };
 
-export default UserManagement;
-  
+export default ServiceManagement; 

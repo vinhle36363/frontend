@@ -16,6 +16,8 @@ import {
 const UsersManagement = dynamic(() => import("@/src/pages/admin/Users/userManagement"), { ssr: false });
 const CustomersManagement = dynamic(() => import("@/src/pages/admin/Customers/customersManagement"), { ssr: false });
 const Dashboards = dynamic(() => import("@/src/pages/admin/dashboards"), { ssr: false });
+const ServicesManagement = dynamic(() => import("@/src/pages/admin/Services/servicesManagement"), {ssr: false});
+const InvoiceManagement = dynamic(() => import("@/src/pages/admin/Invoices/invoiceManagement"), {ssr: false});
 
 type MenuItem = {
   key: string;
@@ -45,13 +47,13 @@ interface SidebarMenuProps {
 const SidebarMenu: React.FC<SidebarMenuProps> = ({ setActiveComponent }) => {
   const [menuItems, setMenuItems] = useState<MenuProps["items"]>([]);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
-
+  const apiToken = process.env.NEXT_PUBLIC_API_TOKEN;
   useEffect(() => {
     fetch("/api/adminMenu", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer 123`,
+        Authorization: `Bearer ${apiToken}`,
       },
     })
       .then((res) => {
@@ -90,10 +92,10 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ setActiveComponent }) => {
           message.info("Rooms Booking component will be implemented soon");
           break;
         case "9":
-          message.info("Services Management component will be implemented soon");
+          setActiveComponent(<ServicesManagement />);
           break;
         case "10":
-          message.info("Invoices Management component will be implemented soon");
+          setActiveComponent(<InvoiceManagement/>);
           break;
         case "11":
           message.info("Analytics Management component will be implemented soon");
@@ -166,6 +168,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ setActiveComponent }) => {
         theme="dark"
         openKeys={openKeys}
         onOpenChange={handleOpenChange}
+        
         mode="inline"
         items={menuItems}
       />

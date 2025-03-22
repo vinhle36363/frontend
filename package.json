@@ -11,9 +11,10 @@
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.2",
     "antd": "^5.24.0",
+    "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
-    "moment": "^2.30.1",
     "next": "^15.1.7",
+    "nextjs": "^0.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
