@@ -16,7 +16,243 @@
   font-family: var(--font-geist-sans);
   background-color: #f5f5f5;
 }
+.page {
+  font-family: var(--font-geist-sans), sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
 
+/* Navigation Styles */
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+}
+
+.navLinks a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navLinks a:hover {
+  color: #1890ff;
+}
+
+.mobileMenuButton {
+  display: none;
+}
+
+.hero {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+  overflow: hidden;
+  margin-top: 64px;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroContent h1 {
+  color: white !important;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.heroContent p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.2rem;
+}
+
+.searchBox {
+  max-width: 1000px;
+  margin: -4rem auto 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: white;
+  padding: 2rem;
+}
+
+.featuredRooms {
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.sectionTitle {
+  text-align: center;
+  margin-bottom: 2rem !important;
+}
+
+.roomImageContainer {
+  position: relative;
+  height: 250px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.roomImageContainer img {
+  transition: transform 0.3s ease;
+}
+
+.roomImageContainer:hover img {
+  transform: scale(1.1);
+}
+
+.favoriteButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.favoriteButton:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.roomTitleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.roomRating {
+  display: flex;
+  align-items: center;
+  color: #faad14;
+}
+
+.roomRating svg {
+  margin-right: 4px;
+}
+
+.roomDescription {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  flex: 1;
+}
+
+.roomPrice {
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.footer {
+  background-color: #f0f2f5;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.footer a {
+  color: #1890ff;
+  margin: 0 10px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #40a9ff;
+}
+
+.adminLinks {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 1rem;
+    margin-top: 56px;
+    height: auto;
+    min-height: 400px;
+  }
+
+  .heroContent h1 {
+    font-size: 2rem;
+  }
+
+  .searchBox {
+    margin: -2rem auto 2rem;
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mobileMenuButton {
+    display: block;
+  }
+
+  .navLinks {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: white;
+    padding: 1rem;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .showMobile {
+    display: flex;
+  }
+
+  .navLinks a {
+    padding: 0.5rem 2rem;
+  }
+
+  .heroContent p {
+    font-size: 1rem;
+  }
+}
 @media (prefers-color-scheme: dark) {
   .page {
     --gray-rgb: 255, 255, 255;
@@ -271,4 +507,40 @@ a.secondary {
   .featuredRooms {
     padding: 2rem 1rem;
   }
+}
+
+/* Additional Responsive Improvements */
+@media (max-width: 480px) {
+  .page {
+    padding: 0;
+  }
+
+  .featuredRooms {
+    padding: 2rem 1rem;
+  }
+
+  .roomImageContainer {
+    height: 180px;
+  }
+
+  .footer {
+    padding: 1rem;
+  }
+}
+
+/* Flexbox improvements for room cards */
+.roomCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.roomCard :global(.ant-card-body) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.roomDescription {
+  flex: 1;
 }

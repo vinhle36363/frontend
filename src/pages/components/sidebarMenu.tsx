@@ -19,6 +19,7 @@ const Dashboards = dynamic(() => import("@/src/pages/admin/dashboards"), { ssr: 
 const ServicesManagement = dynamic(() => import("@/src/pages/admin/Services/servicesManagement"), {ssr: false});
 const InvoiceManagement = dynamic(() => import("@/src/pages/admin/Invoices/invoiceManagement"), {ssr: false});
 
+
 type MenuItem = {
   key: string;
   label: string;
