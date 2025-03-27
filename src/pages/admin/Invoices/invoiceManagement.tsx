@@ -483,6 +483,29 @@ const InvoiceManagement: React.FC = () => {
                   {fields.map((field, index) => (
                     <Card key={field.key} style={{ marginBottom: 16 }}>
                       <Row gutter={16}>
+                        <Col span={8}>
+                          <Form.Item
+                            {...field}
+                            label="Service"
+                            name={[field.name, 'serviceId']}
+                            rules={[{ required: true, message: 'Please select a service' }]}
+                          >
+                            <Select
+                              showSearch
+                              placeholder="Select service"
+                              onChange={(value) => handleServiceChange(String(value), String(index))}
+                              filterOption={(input: string, option: any) =>
+                                (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                            >
+                              {services.map(service => (
+                                <Select.Option key={service.id} value={service.id}>
+                                  {service.name} - ${service.price}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
                         <Col span={4}>
                           <Form.Item
                             {...field}
