@@ -10,45 +10,18 @@ console.log('API Token value:', API_TOKEN);
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // Check if API_TOKEN is configured
   if (!API_TOKEN) {
-    console.error("❌ API_TOKEN is not configured!");
-    return res.status(500).json({ message: "Server configuration error: API_TOKEN is not set" });
+    console.error("❌ CHua config t0ken kia ma!");
+    return res.status(500).json({ message: "Lỗi cấu hình máy chủ: API_TOKEN chưa được thiết lập" });
   }
-
-  // Verify API token
-  const authHeader = req.headers.authorization;
-  console.log('Received authorization header:', authHeader);
-  
-  if (!authHeader) {
-    console.error("❌ No authorization header provided");
-    return res.status(401).json({ message: "No authorization header provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  console.log('Received token:', token);
-  
-  if (!token) {
-    console.error("❌ No token provided in authorization header");
-    return res.status(401).json({ message: "No token provided in authorization header" });
-  }
-
-  if (token !== API_TOKEN) {
-    console.error("❌ Invalid API token");
-    console.error('Expected:', API_TOKEN);
-    console.error('Received:', token);
-    return res.status(401).json({ message: "Invalid API token" });
-  }
-
   // Set CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
-  // Handle preflight requests
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // Handle different HTTP methods
   switch (req.method) {
     case "GET":
       return handleGet(req, res);
@@ -59,18 +32,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case "DELETE":
       return handleDelete(req, res);
     default:
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({ message: "Phương thức không được phép" });
   }
 }
 
-// GET /api/services
+// get services api
 function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
   
   if (id) {
     const service = getServiceById(id as string);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ message: "Dịch vụ không tồn tại" });
     }
     return res.status(200).json(service);
   }
@@ -78,22 +51,22 @@ function handleGet(req: NextApiRequest, res: NextApiResponse) {
   return res.status(200).json(getServices());
 }
 
-// POST /api/services
+// post services api
 function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { name, description, price, category, status, imageUrl } = req.body;
 
   if (!name || !description || !price || !category || !status) {
-    return res.status(400).json({ message: "Missing required fields" });
+    return res.status(400).json({ message: "Thiếu các trường bắt buộc" });
   }
 
   // Validate price
   if (typeof price !== 'number' || price < 0) {
-    return res.status(400).json({ message: "Invalid price" });
+    return res.status(400).json({ message: "Giá không hợp lệ" });
   }
 
   // Validate status
   if (!['available', 'unavailable'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
+    return res.status(400).json({ message: "Trạng thái không hợp lệ" });
   }
 
   const newService = createService({
@@ -114,17 +87,17 @@ function handlePut(req: NextApiRequest, res: NextApiResponse) {
   const { name, description, price, category, status, imageUrl } = req.body;
 
   if (!id) {
-    return res.status(400).json({ message: "Service ID is required" });
+    return res.status(400).json({ message: "Cần cung cấp ID dịch vụ" });
   }
 
   // Validate price if provided
   if (price !== undefined && (typeof price !== 'number' || price < 0)) {
-    return res.status(400).json({ message: "Invalid price" });
+    return res.status(400).json({ message: "Giá không hợp lệ" });
   }
 
   // Validate status if provided
   if (status && !['available', 'unavailable'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
+    return res.status(400).json({ message: "Trạng thái không hợp lệ" });
   }
 
   const updatedService = updateService(id as string, {
@@ -137,7 +110,7 @@ function handlePut(req: NextApiRequest, res: NextApiResponse) {
   });
 
   if (!updatedService) {
-    return res.status(404).json({ message: "Service not found" });
+    return res.status(404).json({ message: "Dịch vụ không tồn tại" });
   }
 
   return res.status(200).json(updatedService);
@@ -148,13 +121,13 @@ function handleDelete(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
   if (!id) {
-    return res.status(400).json({ message: "Service ID is required" });
+    return res.status(400).json({ message: "Cần cung cấp ID dịch vụ" });
   }
 
   const deleted = deleteService(id as string);
   if (!deleted) {
-    return res.status(404).json({ message: "Service not found" });
+    return res.status(404).json({ message: "Dịch vụ không tồn tại" });
   }
 
-  return res.status(200).json({ message: "Service deleted successfully" });
-} 
+  return res.status(200).json({ message: "Xóa dịch vụ thành công" });
+}

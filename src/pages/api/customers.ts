@@ -3,11 +3,11 @@ import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCu
 
 const API_TOKEN = process.env.API_TOKEN;
 
-// Debug API token configuration
-console.log('API Token configured:', !!API_TOKEN);
-console.log('API Token value:', API_TOKEN);
+// Ghi nhật ký cấu hình API token
+console.log('API Token được cấu hình:', !!API_TOKEN);
+console.log('Giá trị API Token:', API_TOKEN);
 
-// Define the Customer type
+// Định nghĩa kiểu dữ liệu Customer
 type Customer = {
   id: string;
   name: string;
@@ -18,51 +18,26 @@ type Customer = {
   updatedAt: string;
 };
 
-// Mock database (replace with actual database in production)
+// Cơ sở dữ liệu giả (thay thế bằng cơ sở dữ liệu thực tế trong môi trường sản xuất)
 let customers: Customer[] = [];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Check if API_TOKEN is configured
+  // Kiểm tra xem API_TOKEN đã được cấu hình chưa
   if (!API_TOKEN) {
-    console.error("❌ API_TOKEN is not configured!");
-    return res.status(500).json({ message: "Server configuration error: API_TOKEN is not set" });
+    console.error("❌ API_TOKEN chưa được cấu hình!");
+    return res.status(500).json({ message: "Ối giời ơi! Máy chủ quên cài API_TOKEN rồi!" });
   }
-
-  // Verify API token
-  const authHeader = req.headers.authorization;
-  console.log('Received authorization header:', authHeader);
-  
-  if (!authHeader) {
-    console.error("❌ No authorization header provided");
-    return res.status(401).json({ message: "No authorization header provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  console.log('Received token:', token);
-  
-  if (!token) {
-    console.error("❌ No token provided in authorization header");
-    return res.status(401).json({ message: "No token provided in authorization header" });
-  }
-
-  if (token !== API_TOKEN) {
-    console.error("❌ Invalid API token");
-    console.error('Expected:', API_TOKEN);
-    console.error('Received:', token);
-    return res.status(401).json({ message: "Invalid API token" });
-  }
-
-  // Set CORS headers
+  // Thiết lập các header CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
-  // Handle preflight requests
+  // Xử lý các yêu cầu preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // Handle different HTTP methods
+  // Xử lý các phương thức HTTP khác nhau
   switch (req.method) {
     case "GET":
       return handleGet(req, res);
@@ -73,7 +48,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case "DELETE":
       return handleDelete(req, res);
     default:
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({ message: "Phương thức này không chơi được đâu nha!" });
   }
 }
 
@@ -84,7 +59,7 @@ function handleGet(req: NextApiRequest, res: NextApiResponse) {
   if (id) {
     const customer = getCustomerById(id as string);
     if (!customer) {
-      return res.status(404).json({ message: "Customer not found" });
+      return res.status(404).json({ message: "Không tìm thấy khách hàng nào, chắc đi lạc rồi!" });
     }
     return res.status(200).json(customer);
   }
@@ -96,40 +71,33 @@ function handleGet(req: NextApiRequest, res: NextApiResponse) {
 function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { name, email, phone, address, status } = req.body;
 
-  console.log('Received customer data:', req.body);
+  console.log('Dữ liệu khách hàng nhận được:', req.body);
 
-  // Validate required fields
   if (!name) {
-    return res.status(400).json({ message: "Name is required" });
+    return res.status(400).json({ message: "Tên đâu rồi? Không có tên thì ai biết là ai!" });
   }
   if (!email) {
-    return res.status(400).json({ message: "Email is required" });
+    return res.status(400).json({ message: "Email đâu? Không có email thì gửi thư kiểu gì?" });
   }
   if (!phone) {
-    return res.status(400).json({ message: "Phone is required" });
+    return res.status(400).json({ message: "Số điện thoại đâu? Không có số thì gọi kiểu gì?" });
   }
   if (!address) {
-    return res.status(400).json({ message: "Address is required" });
+    return res.status(400).json({ message: "Địa chỉ đâu? Không có địa chỉ thì ship kiểu gì?" });
   }
   if (!status) {
-    return res.status(400).json({ message: "Status is required" });
+    return res.status(400).json({ message: "Trạng thái đâu? Không có trạng thái thì biết sống hay nghỉ?" });
   }
-
-  // Validate status
   if (!['active', 'inactive'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status. Must be either 'active' or 'inactive'" });
+    return res.status(400).json({ message: "Trạng thái gì lạ vậy? Chỉ nhận 'active' hoặc 'inactive' thôi nha!" });
   }
-
-  // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: "Invalid email format" });
+    return res.status(400).json({ message: "Email nhìn sai sai, kiểm tra lại đi!" });
   }
-
-  // Validate phone format (basic validation)
   const phoneRegex = /^\+?[\d\s-]{10,}$/;
   if (!phoneRegex.test(phone)) {
-    return res.status(400).json({ message: "Invalid phone format" });
+    return res.status(400).json({ message: "Số điện thoại gì lạ vậy? Nhập lại cho đúng nha!" });
   }
 
   try {
@@ -141,11 +109,11 @@ function handlePost(req: NextApiRequest, res: NextApiResponse) {
       status,
     });
 
-    console.log('Created new customer:', newCustomer);
+    console.log('Đã tạo khách hàng mới:', newCustomer);
     return res.status(201).json(newCustomer);
   } catch (error) {
-    console.error('Error creating customer:', error);
-    return res.status(500).json({ message: "Failed to create customer" });
+    console.error('Lỗi khi tạo khách hàng:', error);
+    return res.status(500).json({ message: "Ối giời ơi! Tạo khách hàng thất bại rồi!" });
   }
 }
 
@@ -155,12 +123,12 @@ function handlePut(req: NextApiRequest, res: NextApiResponse) {
   const { name, email, phone, address, status } = req.body;
 
   if (!id) {
-    return res.status(400).json({ message: "Customer ID is required" });
+    return res.status(400).json({ message: "ID khách hàng đâu? Không có ID thì sửa kiểu gì?" });
   }
 
-  // Validate status if provided
+  // Kiểm tra giá trị trạng thái nếu được cung cấp
   if (status && !['active', 'inactive'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
+    return res.status(400).json({ message: "Trạng thái gì lạ vậy? Chỉ nhận 'active' hoặc 'inactive' thôi nha!" });
   }
 
   const updatedCustomer = updateCustomer(id as string, {
@@ -172,7 +140,7 @@ function handlePut(req: NextApiRequest, res: NextApiResponse) {
   });
 
   if (!updatedCustomer) {
-    return res.status(404).json({ message: "Customer not found" });
+    return res.status(404).json({ message: "Không tìm thấy khách hàng nào để sửa, chắc đi lạc rồi!" });
   }
 
   return res.status(200).json(updatedCustomer);
@@ -183,13 +151,13 @@ function handleDelete(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
   if (!id) {
-    return res.status(400).json({ message: "Customer ID is required" });
+    return res.status(400).json({ message: "ID khách hàng đâu? Không có ID thì xóa kiểu gì?" });
   }
 
   const deleted = deleteCustomer(id as string);
   if (!deleted) {
-    return res.status(404).json({ message: "Customer not found" });
+    return res.status(404).json({ message: "Không tìm thấy khách hàng nào để xóa, chắc đi lạc rồi!" });
   }
 
-  return res.status(200).json({ message: "Customer deleted successfully" });
+  return res.status(200).json({ message: "Xóa khách hàng thành công, bye bye nha!" });
 }

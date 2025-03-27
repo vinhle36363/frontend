@@ -1,13 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getInvoices, getInvoiceById, createInvoice, updateInvoice, deleteInvoice, calculateInvoiceTotals } from "../../data/invoices";
+import {
+  getInvoices,
+  getInvoiceById,
+  createInvoice,
+  updateInvoice,
+  deleteInvoice,
+  calculateInvoiceTotals,
+} from "../../data/invoices";
 
 const API_TOKEN = process.env.API_TOKEN;
-
-// Debug API token configuration
-console.log('API Token configured:', !!API_TOKEN);
-console.log('API Token value:', API_TOKEN);
-
-// Define the Invoice type
 type InvoiceItem = {
   serviceId: string;
   serviceName: string;
@@ -24,7 +25,7 @@ type Invoice = {
   subtotal: number;
   tax: number;
   total: number;
-  status: 'pending' | 'paid' | 'cancelled';
+  status: "pending" | "paid" | "cancelled";
   paymentMethod?: string;
   notes?: string;
   createdAt: string;
@@ -35,39 +36,19 @@ type Invoice = {
 let invoices: Invoice[] = [];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Check if API_TOKEN is configured
+  // Kiem tra API T0ken da duoc cau hinh chua
   if (!API_TOKEN) {
-    console.error("❌ API_TOKEN is not configured!");
-    return res.status(500).json({ message: "Server configuration error: API_TOKEN is not set" });
+    console.error("❌ Chua config api token kia` ╰（‵□′）╯");
+    return res
+      .status(500)
+      .json({ message: "Server configuration error: API_TOKEN is not set" });
   }
-
-  // Verify API token
-  const authHeader = req.headers.authorization;
-  console.log('Received authorization header:', authHeader);
-  
-  if (!authHeader) {
-    console.error("❌ No authorization header provided");
-    return res.status(401).json({ message: "No authorization header provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  console.log('Received token:', token);
-  
-  if (!token) {
-    console.error("❌ No token provided in authorization header");
-    return res.status(401).json({ message: "No token provided in authorization header" });
-  }
-
-  if (token !== API_TOKEN) {
-    console.error("❌ Invalid API token");
-    console.error('Expected:', API_TOKEN);
-    console.error('Received:', token);
-    return res.status(401).json({ message: "Invalid API token" });
-  }
-
-  // Set CORS headers
+  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
   res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
   // Handle preflight requests
@@ -86,39 +67,44 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case "DELETE":
       return handleDelete(req, res);
     default:
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({ message: "ko tim` thay phuong thuc" });
   }
 }
 
-// GET /api/invoices
+// get invoice api
 function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  
+
   if (id) {
     const invoice = getInvoiceById(id as string);
     if (!invoice) {
-      return res.status(404).json({ message: "Invoice not found" });
+      return res.status(404).json({ message: "ko tim` thay invoices id (ToT)/~~~" });
     }
     return res.status(200).json(invoice);
   }
-  
+
   return res.status(200).json(getInvoices());
 }
 
-// POST /api/invoices
+// post invoices api
 function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  const { customerId, customerName, items, tax, status, paymentMethod, notes } = req.body;
+  const { customerId, customerName, items, tax, status, paymentMethod, notes } =
+    req.body;
 
-  if (!customerId || !customerName || !items || !Array.isArray(items) || items.length === 0 || !status) {
-    return res.status(400).json({ message: "Missing required fields" });
+  if (
+    !customerId ||
+    !customerName ||
+    !items ||
+    !Array.isArray(items) ||
+    items.length === 0 ||
+    !status
+  ) {
+    return res.status(400).json({ message: "Nhap thieu du lieu rui` kia` ╰（‵□′）╯" });
   }
 
-  // Validate status
-  if (!['pending', 'paid', 'cancelled'].includes(status)) {
+  if (!["pending", "paid", "cancelled"].includes(status)) {
     return res.status(400).json({ message: "Invalid status" });
   }
-
-  // Calculate totals
   const { subtotal, total } = calculateInvoiceTotals(items, tax || 0);
 
   const newInvoice = createInvoice({
@@ -136,21 +122,18 @@ function handlePost(req: NextApiRequest, res: NextApiResponse) {
   return res.status(201).json(newInvoice);
 }
 
-// PUT /api/invoices
+// put invoices api
 function handlePut(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  const { customerId, customerName, items, tax, status, paymentMethod, notes } = req.body;
+  const { customerId, customerName, items, tax, status, paymentMethod, notes } =
+    req.body;
 
   if (!id) {
-    return res.status(400).json({ message: "Invoice ID is required" });
+    return res.status(400).json({ message: "Ko tim` thay invoices id nhe" });
   }
-
-  // Validate status if provided
-  if (status && !['pending', 'paid', 'cancelled'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
+  if (status && !["pending", "paid", "cancelled"].includes(status)) {
+    return res.status(400).json({ message: "Them trang thai hoat dong kia` ma  ╰（‵□′）╯"  });
   }
-
-  // Calculate totals if items are provided
   let subtotal = 0;
   let total = 0;
   if (items && Array.isArray(items)) {
@@ -172,24 +155,24 @@ function handlePut(req: NextApiRequest, res: NextApiResponse) {
   });
 
   if (!updatedInvoice) {
-    return res.status(404).json({ message: "Invoice not found" });
+    return res.status(404).json({ message: "ko tim` thay invoices id nhe" });
   }
 
   return res.status(200).json(updatedInvoice);
 }
 
-// DELETE /api/invoices
+// delete invoices api
 function handleDelete(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
   if (!id) {
-    return res.status(400).json({ message: "Invoice ID is required" });
+    return res.status(400).json({ message: "Chua co invoices id ne`" });
   }
 
   const deleted = deleteInvoice(id as string);
   if (!deleted) {
-    return res.status(404).json({ message: "Invoice not found" });
+    return res.status(404).json({ message: "Ko tim` thay invoices id ne` OK?" });
   }
 
-  return res.status(200).json({ message: "Invoice deleted successfully" });
-} 
+  return res.status(200).json({ message: "Xoa duoc rui`" });
+}

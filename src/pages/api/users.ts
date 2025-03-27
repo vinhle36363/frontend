@@ -2,12 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getUsers, getUserById, createUser, updateUser, deleteUser } from "../../data/users";
 
 const API_TOKEN = process.env.API_TOKEN;
-
-// Debug API token configuration
-console.log('API Token configured:', !!API_TOKEN);
-console.log('API Token value:', API_TOKEN);
-
-// Define the User type
 type User = {
   id: string;
   username: string;
@@ -18,41 +12,14 @@ type User = {
   updatedAt: string;
 };
 
-// Mock database (replace with actual database in production)
 let users: User[] = [];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Check if API_TOKEN is configured
   if (!API_TOKEN) {
-    console.error("❌ API_TOKEN is not configured!");
-    return res.status(500).json({ message: "Server configuration error: API_TOKEN is not set" });
+    console.error("❌ API_TOKEN chưa được cấu hình!");
+    return res.status(500).json({ message: "Lỗi cấu hình máy chủ: API_TOKEN chưa được thiết lập" });
   }
 
-  // Verify API token
-  const authHeader = req.headers.authorization;
-  console.log('Received authorization header:', authHeader);
-  
-  if (!authHeader) {
-    console.error("❌ No authorization header provided");
-    return res.status(401).json({ message: "No authorization header provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  console.log('Received token:', token);
-  
-  if (!token) {
-    console.error("❌ No token provided in authorization header");
-    return res.status(401).json({ message: "No token provided in authorization header" });
-  }
-
-  if (token !== API_TOKEN) {
-    console.error("❌ Invalid API token");
-    console.error('Expected:', API_TOKEN);
-    console.error('Received:', token);
-    return res.status(401).json({ message: "Invalid API token" });
-  }
-
-  // Set CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
@@ -73,7 +40,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case "DELETE":
       return handleDelete(req, res);
     default:
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({ message: "Phương thức không được phép" });
   }
 }
 
@@ -84,7 +51,7 @@ function handleGet(req: NextApiRequest, res: NextApiResponse) {
   if (id) {
     const user = getUserById(id as string);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
     }
     return res.status(200).json(user);
   }
@@ -97,17 +64,17 @@ function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { username, email, role, status } = req.body;
 
   if (!username || !email || !role || !status) {
-    return res.status(400).json({ message: "Missing required fields" });
+    return res.status(400).json({ message: "Thiếu các trường bắt buộc" });
   }
 
   // Validate role
   if (!['admin', 'user'].includes(role)) {
-    return res.status(400).json({ message: "Invalid role" });
+    return res.status(400).json({ message: "Vai trò không hợp lệ" });
   }
 
   // Validate status
   if (!['active', 'inactive'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
+    return res.status(400).json({ message: "Trạng thái không hợp lệ" });
   }
 
   const newUser = createUser({
@@ -126,17 +93,17 @@ function handlePut(req: NextApiRequest, res: NextApiResponse) {
   const { username, email, role, status } = req.body;
 
   if (!id) {
-    return res.status(400).json({ message: "User ID is required" });
+    return res.status(400).json({ message: "Cần cung cấp ID người dùng" });
   }
 
   // Validate role if provided
   if (role && !['admin', 'user'].includes(role)) {
-    return res.status(400).json({ message: "Invalid role" });
+    return res.status(400).json({ message: "Vai trò không hợp lệ" });
   }
 
   // Validate status if provided
   if (status && !['active', 'inactive'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
+    return res.status(400).json({ message: "Trạng thái không hợp lệ" });
   }
 
   const updatedUser = updateUser(id as string, {
@@ -147,7 +114,7 @@ function handlePut(req: NextApiRequest, res: NextApiResponse) {
   });
 
   if (!updatedUser) {
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).json({ message: "Không tìm thấy người dùng" });
   }
 
   return res.status(200).json(updatedUser);
@@ -158,13 +125,13 @@ function handleDelete(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
   if (!id) {
-    return res.status(400).json({ message: "User ID is required" });
+    return res.status(400).json({ message: "Cần cung cấp ID người dùng" });
   }
 
   const deleted = deleteUser(id as string);
   if (!deleted) {
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).json({ message: "Không tìm thấy người dùng" });
   }
 
-  return res.status(200).json({ message: "User deleted successfully" });
-} 
+  return res.status(200).json({ message: "Xóa người dùng thành công" });
+}
